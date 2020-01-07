@@ -119,12 +119,15 @@ int main(int argc, char **argv) {
     int port1 = atoi(argv[1]);
     int port2 = atoi(argv[2]);
 
+    int fd = open("zadanie.out", O_RDWR | O_CREAT | O_TRUNC, 0766);
+
     //create new pipes
     int p[2], q[2];
     if(pipe(p) == -1 || pipe(q) == -1){
         perror("Oops... Something went wrong during the pipes creating!");
         exit(E_PIPE);
     }
+    write(fd, "Pipes were created!\n", strlen("Pipes were created!\n")+1);
 
     //execute p* processes
     if(execution(4,"./proc_p1", 0, p[1]) != SUCCESS ){
@@ -133,12 +136,16 @@ int main(int argc, char **argv) {
     }
     pid_t pidP1 = lastPid;
     printf("###P1 %d\n", (int) pidP1);
+    write(fd, "P1 was succsessfully executed!\n", strlen("P1 was succsessfully executed!\n")+1);
+
     if(execution(4,"./proc_p2", 0, p[1]) != SUCCESS) {
         perror("Oops... Something went wrong during the P2 execution!");
         exit(E_EXEC);
     }
     pid_t pidP2 = lastPid; 
     printf("###P2 %d\n", (int) pidP2);
+    write(fd, "P2 was succsessfully executed!\n", strlen("P2 was succsessfully executed!\n")+1);
+
     //execute pr
     if(execution(7, "./proc_pr", 1, pidP1, pidP2, p[0], q[1]) != SUCCESS) {
         perror("Oops... Something went wrong during the PR execution!");
@@ -146,20 +153,35 @@ int main(int argc, char **argv) {
     }
     pid_t pidPR = lastPid;
     printf("###PR %d\n", (int) pidPR);
-    //execution(4, "./test", 1, 543);
+    write(fd, "PR was succsessfully executed!\n", strlen("PR was succsessfully executed!\n")+1);
     
     kill(pidP1, SIGUSR2);
     kill(pidP2, SIGUSR2);
+
+    write(fd, "P1, P2 & PR died!\n", strlen("P1, P2 & PR died!\n")+1);
+
+    if(execution(4, "./proc_serv2", 0, port2) != SUCCESS) {
+        perror("Oops... Serv2 execution error!");
+        exit(E_EXEC);
+    }
+    pid_t pidServ2 = lastPid;
+    printf("###Serv2 %d\n", (int) pidServ2);
+    write(fd, "Serv2 was succsessfully executed!\n", strlen("Serv2 was succsessfully executed!\n")+1);
 
     if(execution(5, "./proc_serv1", 0, port1, port2) != SUCCESS) {
         perror("Oops... Serv1 execution error!");
         exit(E_EXEC);
     }
+    pid_t pidServ1 = lastPid;
+    printf("###Serv1 %d\n", (int) pidServ1);
+    write(fd, "Serv1 was succsessfully executed!\n", strlen("Serv1 was succsessfully executed!\n")+1);
 
     int idS1 = ipc_create('m', 2, isemget);
     int idS2 = ipc_create('n', 2, isemget);
     int idSM1 = ipc_create('j', BUF_SIZE, shmget);
     int idSM2 = ipc_create('k', BUF_SIZE, shmget);
+
+    write(fd, "IPC objects were succsessfully created!\n", strlen("IPC objects were succsessfully created!\n")+1);
 
     int semValues[] = {1,0};
     if(semctl(idS1, 0, SETALL, semValues) == -1) {
@@ -178,6 +200,7 @@ int main(int argc, char **argv) {
     }
     pid_t pidT = lastPid;
     printf("###T %d\n", (int) pidT);
+    write(fd, "T was succsessfully executed!\n", strlen("T was succsessfully executed!\n")+1);
 
     if(execution(6, "./proc_d", 0, idS2, idSM2, port1) != SUCCESS) {
         perror("Oops... D execution error!");
@@ -185,6 +208,7 @@ int main(int argc, char **argv) {
     }
     pid_t pidD = lastPid;
     printf("###D %d\n", (int) pidD);
+    write(fd, "D was succsessfully executed!\n", strlen("D was succsessfully executed!\n")+1);
 
     if(execution(7, "./proc_s", 1, idSM1, idS1, idSM2, idS2) != SUCCESS) {
         perror("Oops... Something went wrong during the S execution!");
@@ -192,6 +216,7 @@ int main(int argc, char **argv) {
     }
     pid_t pidS = lastPid;
     printf("###S %d\n", (int) pidS);
+    write(fd, "S was succsessfully executed!\n", strlen("S was succsessfully executed!\n")+1);
 
     kill(pidT, SIGUSR1);
     kill(pidD, SIGUSR1);

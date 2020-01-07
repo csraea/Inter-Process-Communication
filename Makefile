@@ -1,4 +1,4 @@
-all: zadanie proc_p1 proc_p2 proc_t proc_d
+all: zadanie proc_p1 proc_p2 proc_t proc_d proc_serv2
 
 zadanie: zadanie.c
 	gcc zadanie.c -o zadanie

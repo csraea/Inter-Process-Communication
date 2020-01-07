@@ -9,8 +9,8 @@
 #include <signal.h>
 #include <stdbool.h>
 
-#define CERVENA arg
-#define ZELENA arg
+#define RED arg
+#define GREEN arg
 #define S1_0 S1_id, 0
 #define S1_1 S1_id, 1
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
    int SHM1_id = atoi(argv[2]);
    int S1_id = atoi(argv[3]);
 
-   fcntl(R2_id, F_SETFL, O_NONBLOCK);
+   //fcntl(R2_id, F_SETFL, O_NONBLOCK);
 
    printf("(T) proc_t ..... start  (%d)\n", semctl(S1_id, 0, GETVAL));
    sleep(1);
@@ -53,9 +53,9 @@ int main(int argc, char *argv[]) {
       while(0 == (semctl(S1_0, GETVAL))) sleep(1);
       arg.val = 0;
       readWord(R2_id, SHM1_id);
-      semctl(S1_0, SETVAL, CERVENA);
+      semctl(S1_0, SETVAL, RED);
       arg.val = 1;
-      semctl(S1_1, SETVAL, ZELENA);
+      semctl(S1_1, SETVAL, GREEN);
       sleep(3);
    }
    printf("Exiting T...\n");
