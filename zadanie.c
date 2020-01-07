@@ -151,6 +151,11 @@ int main(int argc, char **argv) {
     kill(pidP1, SIGUSR2);
     kill(pidP2, SIGUSR2);
 
+    if(execution(5, "./proc_serv1", 0, port1, port2) != SUCCESS) {
+        perror("Oops... Serv1 execution error!");
+        exit(E_EXEC);
+    }
+
     int idS1 = ipc_create('m', 2, isemget);
     int idS2 = ipc_create('n', 2, isemget);
     int idSM1 = ipc_create('j', BUF_SIZE, shmget);
@@ -167,29 +172,34 @@ int main(int argc, char **argv) {
         exit(E_SEMCTL);
     }
 
-    if(execution(7, "./proc_s", 0, idSM1, idS1, idSM2, idS2) != SUCCESS) {
-        perror("Oops... Something went wrong during the S execution!");
-        exit(E_EXEC);
-    }
-    pid_t pidS = lastPid;
-    printf("###S %d\n", (int) pidS);
-    if(semChange != true) {
-        pause();
-    } 
-    
-    if(execution(6, "./proc_t", 1, q[0], idSM1, idS1) != SUCCESS) {
+    if(execution(6, "./proc_t", 0, q[0], idSM1, idS1) != SUCCESS) {
         perror("Oops... Something went wrong during the T execution!");
         exit(E_EXEC);
     }
     pid_t pidT = lastPid;
     printf("###T %d\n", (int) pidT);
 
-    // if(execution(5, "./proc_d", 1, idSM2, idS2) != SUCCESS) {
-    //     perror("Oops... D execution error!");
-    //     exit(E_EXEC);
-    // }
+    if(execution(6, "./proc_d", 0, idS2, idSM2, port1) != SUCCESS) {
+        perror("Oops... D execution error!");
+        exit(E_EXEC);
+    }
+    pid_t pidD = lastPid;
+    printf("###D %d\n", (int) pidD);
 
+    if(execution(7, "./proc_s", 1, idSM1, idS1, idSM2, idS2) != SUCCESS) {
+        perror("Oops... Something went wrong during the S execution!");
+        exit(E_EXEC);
+    }
+    pid_t pidS = lastPid;
+    printf("###S %d\n", (int) pidS);
 
+    kill(pidT, SIGUSR1);
+    kill(pidD, SIGUSR1);
+
+    // if(semChange != true) {
+    //     pause();
+    // } 
+    
     // if(semctl(idS2, 0, GETVAL) != 0) {
     //     pause();
     // }
@@ -213,55 +223,13 @@ int main(int argc, char **argv) {
     str = (char *) shmat(idSM2, NULL, 0);
     puts(str);
 
-
-    shmctl(idSM2, IPC_RMID, NULL);
-    shmctl(idSM1, IPC_RMID, NULL);
-    semctl(idS1, 0, IPC_RMID);
-    semctl(idS2, 0, IPC_RMID);
+    // sleep(10);
+    // shmctl(idSM2, IPC_RMID, NULL);
+    // shmctl(idSM1, IPC_RMID, NULL);
+    // semctl(idS1, 0, IPC_RMID);
+    // semctl(idS2, 0, IPC_RMID);
 
 
 
 
 }
-
-
-// short t_execution(int q, int idSM1, char *progPath) {
-//     char *qbuf, *idSM1buf;
-//     sprintf(qbuf, "%d", q);
-//     sprintf(idSM1buf, "%d", idSM1);
-//     short result;
-//     pid_t forkResult = fork();
-//     switch(forkResult) {
-//         case -1:
-//             perror("Oops... Something went wrong while fork()!");
-//             exit(E_FORK);
-//         case 0:
-//             result = execl(progPath, progPath, qbuf, idSM1buf, (char *)NULL);
-//             break;
-//         default:
-//             wait(&forkResult);   //wait untill t ends
-//             result = SUCCESS;
-//     }
-//     return result;    
-// }
-
-// short s_execution(int idSM1, int idS1, int idSM2, int idS2, char *progPath) {
-//     char *idSM1buf, *idSM2buf, *idS1buf, *idS2buf;
-//     sprintf(idS1buf, "%d", idS1);
-//     sprintf(idS2buf, "%d", idS2);
-//     sprintf(idSM1buf, "%d", idSM1);
-//     sprintf(idSM2buf, "%d", idSM2);
-//     short result;
-//     pid_t forkResult = fork();
-//     switch(forkResult) {
-//         case -1:
-//             perror("Oops... Something went wrong while fork()!");
-//             exit(E_FORK);
-//         case 0:
-//             result = execl(progPath, idSM1buf, idS1buf, idSM2buf, idS2buf, (char *)NULL);
-//             break;
-//         default:
-//             result = SUCCESS;
-//     }
-//     return result;    
-// }

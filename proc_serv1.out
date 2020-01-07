@@ -1,0 +1,49 @@
+TCP server uspesne vytvoreny na porte 5001.
+-----------------
+Prijal som 1. slovo 'nula-pr-s'.
+Odosielam 1. slovo 'nula-pr-s-serv1'.
+Odoslal som slovo 'nula-pr-s-serv1'.
+-----------------
+Prijal som 2. slovo 'desat-pr-s'.
+Odosielam 2. slovo 'desat-pr-s-serv1'.
+Odoslal som slovo 'desat-pr-s-serv1'.
+-----------------
+Prijal som 3. slovo 'jeden-pr-s'.
+Odosielam 3. slovo 'jeden-pr-s-serv1'.
+Odoslal som slovo 'jeden-pr-s-serv1'.
+-----------------
+Prijal som 4. slovo 'dvadsat-pr-s'.
+Odosielam 4. slovo 'dvadsat-pr-s-serv1'.
+Odoslal som slovo 'dvadsat-pr-s-serv1'.
+-----------------
+Prijal som 5. slovo 'dva-pr-s'.
+Odosielam 5. slovo 'dva-pr-s-serv1'.
+Odoslal som slovo 'dva-pr-s-serv1'.
+-----------------
+Prijal som 6. slovo 'tridsat-pr-s'.
+Odosielam 6. slovo 'tridsat-pr-s-serv1'.
+Odoslal som slovo 'tridsat-pr-s-serv1'.
+-----------------
+Prijal som 7. slovo 'tri-pr-s'.
+Odosielam 7. slovo 'tri-pr-s-serv1'.
+Odoslal som slovo 'tri-pr-s-serv1'.
+-----------------
+Prijal som 8. slovo 'styridsat-pr-s'.
+Odosielam 8. slovo 'styridsat-pr-s-serv1'.
+Odoslal som slovo 'styridsat-pr-s-serv1'.
+-----------------
+Prijal som 9. slovo 'styri-pr-s'.
+Odosielam 9. slovo 'styri-pr-s-serv1'.
+Odoslal som slovo 'styri-pr-s-serv1'.
+-----------------
+Prijal som 10. slovo 'patdesiat-pr-s'.
+Odosielam 10. slovo 'patdesiat-pr-s-serv1'.
+Odoslal som slovo 'patdesiat-pr-s-serv1'.
+-----------------
+Prijal som 11. slovo '-s'.
+Odosielam 11. slovo '-s-serv1'.
+Odoslal som slovo '-s-serv1'.
+-----------------
+Prijal som 12. slovo '-s'.
+Odosielam 12. slovo '-s-serv1'.
+Odoslal som slovo '-s-serv1'.

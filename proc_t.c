@@ -1,91 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/shm.h>
 #include <sys/sem.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include <stdlib.h>
+#include <sys/shm.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
+#include <signal.h>
 #include <stdbool.h>
 
-#ifndef BUF_SIZE
-#define BUF_SIZE 1024
-#endif 
+#define CERVENA arg
+#define ZELENA arg
+#define S1_0 S1_id, 0
+#define S1_1 S1_id, 1
 
-enum errors {
-    SUCCESS,
-    E_ARGS,
-    E_SEMV,
-    E_SHMAT,
-    E_RDWR,
-    E_SHMDT,
-    E_SEMCTL
-} errors;
-
-struct shmseg {
-    int cnt;    //Number of bytes used in 'buf'
-    char buf[BUF_SIZE];
-};
-
-int main(int argc, char **argv) {
-    if(argc != 4) {
-        perror("Oops... Invalid arguments!");
-        exit(E_ARGS);
-    }
-
-    int q = atoi(argv[1]);
-    int idSM1 = atoi(argv[2]);
-    int idS1 = atoi(argv[3]);
-
-    char *shmp;
-
-    if(semctl(idS1, 0, GETVAL) != 1) {
-        perror("Oops... Semafore value is not propriate!");
-        printf("%d\n", errno);
-        exit(E_SEMV);
-    }
-
-    shmp = (char *) shmat(idSM1, NULL, 0);
-    void *buf = shmp;
-    if (shmp == (void *) -1) {
-        perror("Oops... Shmat() went wrong!");
-        exit(E_SHMAT);
-    }
-
-    int ret = 1, flag = 0;
-    do {
-        if(flag != 0) shmp++;
-        ret = read(q, shmp, 1);
-        if(ret == -1) {
-            perror("Oops... Reading & writing went wrong!");
-            exit(E_RDWR);
-        }
-        flag = 1;
-    } while (*shmp != ' ' && *shmp != '\t' && *shmp != '\n' && *shmp != '\0' && ret != 0);
-    *shmp = '\0';
-    if(shmdt(buf) == -1) {
-        perror("Oops... Detaching error!");
-        exit(E_SHMDT);
-    }
-    
-    int semValues[] = {0,1};
-    if(semctl(idS1, 0, SETALL, semValues) == -1) {
-        perror("Oops... Something went wrong during the semctl()!");
-        exit(E_SEMCTL);
-    }
-    exit(SUCCESS);
+static _Bool exitPermission = false;
+static void sigHandler(int SIG) {
+   exitPermission = true;
 }
 
-/*
-    while (semctl != 0) {
-        read 1 word
-        change semaphores
-        block
-        -- when unblocks by the s process, enters the loop again
-    }
+void readWord(int idP, int idSM) {
+   int i = -1, ret = -1;
+   char *word = (char*)shmat(idSM, NULL, SHM_RND);
+   do {
+      i++;
+      ret = read(idP, &word[i], 1);
+   } while(ret > 0 && word[i] != '\n' && word[i] != '\0' && word[i] != '\n' && word[i] != ' ' && word[i] != '\t');
 
-    */
+   word[i] = '\0';
+   printf("(T)R2 -> SHM1 %s \n", word);
+}
+
+
+int main(int argc, char *argv[]) {
+   signal(SIGUSR1, sigHandler);
+   union semun {
+      int val;
+      struct semid_ds *buf;
+      unsigned short *array;
+   } arg;
+
+   int R2_id = atoi(argv[1]);
+   int SHM1_id = atoi(argv[2]);
+   int S1_id = atoi(argv[3]);
+
+   fcntl(R2_id, F_SETFL, O_NONBLOCK);
+
+   printf("(T) proc_t ..... start  (%d)\n", semctl(S1_id, 0, GETVAL));
+   sleep(1);
+
+   while(!exitPermission){
+      while(0 == (semctl(S1_0, GETVAL))) sleep(1);
+      arg.val = 0;
+      readWord(R2_id, SHM1_id);
+      semctl(S1_0, SETVAL, CERVENA);
+      arg.val = 1;
+      semctl(S1_1, SETVAL, ZELENA);
+      sleep(3);
+   }
+   printf("Exiting T...\n");
+}

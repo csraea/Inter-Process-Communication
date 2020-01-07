@@ -1,0 +1,32 @@
+Proces pripraveny.
+Posielam SIGUSR1 procesu P1.
+Precital som 1. slovo 'nula'.
+Zapisal som do rury slovo 'nula-pr'.
+Posielam SIGUSR1 procesu P2.
+Precital som 2. slovo 'desat'.
+Zapisal som do rury slovo 'desat-pr'.
+Posielam SIGUSR1 procesu P1.
+Precital som 3. slovo 'jeden'.
+Zapisal som do rury slovo 'jeden-pr'.
+Posielam SIGUSR1 procesu P2.
+Precital som 4. slovo 'dvadsat'.
+Zapisal som do rury slovo 'dvadsat-pr'.
+Posielam SIGUSR1 procesu P1.
+Precital som 5. slovo 'dva'.
+Zapisal som do rury slovo 'dva-pr'.
+Posielam SIGUSR1 procesu P2.
+Precital som 6. slovo 'tridsat'.
+Zapisal som do rury slovo 'tridsat-pr'.
+Posielam SIGUSR1 procesu P1.
+Precital som 7. slovo 'tri'.
+Zapisal som do rury slovo 'tri-pr'.
+Posielam SIGUSR1 procesu P2.
+Precital som 8. slovo 'styridsat'.
+Zapisal som do rury slovo 'styridsat-pr'.
+Posielam SIGUSR1 procesu P1.
+Precital som 9. slovo 'styri'.
+Zapisal som do rury slovo 'styri-pr'.
+Posielam SIGUSR1 procesu P2.
+Precital som 10. slovo 'patdesiat'.
+Zapisal som do rury slovo 'patdesiat-pr'.
+Proces uspesne ukonceny...
