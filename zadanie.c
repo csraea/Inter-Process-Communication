@@ -103,8 +103,7 @@ short execution(int argc, ...) {
             }
             va_end(valist);
     }
-    return (status == 0 ) ? SUCCESS : status;
-    
+    return (status == 0 ) ? SUCCESS : status;   
 }
 
 int main(int argc, char **argv) {
@@ -176,6 +175,9 @@ int main(int argc, char **argv) {
     printf("###Serv1 %d\n", (int) pidServ1);
     write(fd, "Serv1 was succsessfully executed!\n", strlen("Serv1 was succsessfully executed!\n")+1);
 
+    sleep(3);
+    printf("Servers wee started\n");
+    
     int idS1 = ipc_create('m', 2, isemget);
     int idS2 = ipc_create('n', 2, isemget);
     int idSM1 = ipc_create('j', BUF_SIZE, shmget);
@@ -218,6 +220,7 @@ int main(int argc, char **argv) {
     printf("###S %d\n", (int) pidS);
     write(fd, "S was succsessfully executed!\n", strlen("S was succsessfully executed!\n")+1);
 
+    //sleep(12);
     kill(pidT, SIGUSR1);
     kill(pidD, SIGUSR1);
 

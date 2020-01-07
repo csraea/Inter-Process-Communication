@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 #define BUFSIZE 1024
 
@@ -67,7 +68,6 @@ int main(int argc, char **argv) {
     * bind: associate the parent socket with a port 
     */
     if (bind(sockfd, (struct sockaddr *) &serveraddr, sizeof(serveraddr)) < 0) error("ERROR on binding");
-
     /* 
     * main loop: wait for a datagram, then echo it
     */
@@ -78,7 +78,20 @@ int main(int argc, char **argv) {
          */
         bzero(buf, BUFSIZE);
         n = recvfrom(sockfd, buf, BUFSIZE, 0, (struct sockaddr *) &clientaddr, &clientlen);
-        if (n < 0)error("ERROR in recvfrom");
+        if (n < 0 /*&& errno != EAGAIN && errno != EWOULDBLOCK*/) error("ERROR in recvfrom");
+        // if (n == 0 || errno == EAGAIN || errno == EWOULDBLOCK) {
+        //     for(size_t i = 0; i < 10 && n == 0; i++) {
+        //         sleep(1);
+        //         printf("(Serv2) waiting for the message... [%zu]\n", i);
+        //         bzero(buf, BUFSIZE);
+        //         n = recvfrom(sockfd, buf, BUFSIZE, MSG_DONTWAIT, (struct sockaddr *) &clientaddr, &clientlen);
+        //     }
+        //     if(n == 0) {        // exiting the program when no messaes are pending
+        //         close(sockfd);
+        //         close(fd);
+        //         exit(EXIT_SUCCESS);
+        //     } else continue;
+        // }
         /* 
          * gethostbyaddr: determine who sent the datagram
          */
